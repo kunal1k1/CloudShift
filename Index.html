@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CloudShift</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Background Video -->
+  <video muted loop playsinline id="bg-video">
+    <source src="video.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+
+  <!-- Logo -->
+  <div class="logo">CloudShift</div>
+
+  <!-- Top Right Glowing Buttons -->
+  <div class="top-buttons">
+    <button><span>Login</span></button>
+    <button><span>Contact Us</span></button>
+    <button><span>Get Started</span></button>
+  </div>
+
+  <!-- Main Center Text -->
+  <div class="content">
+    <h1 class="pop-in">Welcome</h1>
+    <p class="slide-up">Let's See Your City Forecast</p>
+    <button class="search-btn" onclick="window.location.href='search.html'">Search for your city</button>
+  </div>
+
+  <!-- Clock -->
+  <div class="clock-container">
+    <div id="clock">00:00:00</div>
+    <div id="date">DD-MM-YYYY</div>
+  </div>
+
+  <!-- JS for pointer glow -->
+  <script>
+    const syncPointer = ({ x: pointerX, y: pointerY }) => {
+      const x = pointerX.toFixed(2);
+      const y = pointerY.toFixed(2);
+      const xp = (pointerX / window.innerWidth).toFixed(2);
+      const yp = (pointerY / window.innerHeight).toFixed(2);
+      document.documentElement.style.setProperty('--x', x);
+      document.documentElement.style.setProperty('--xp', xp);
+      document.documentElement.style.setProperty('--y', y);
+      document.documentElement.style.setProperty('--yp', yp);
+    };
+    document.body.addEventListener('pointermove', syncPointer);
+  </script>
+
+  <!-- Clock and Video Time Controller -->
+  <script>
+    const video = document.getElementById("bg-video");
+    const clock = document.getElementById("clock");
+    const date = document.getElementById("date");
+
+    function updateClockAndVideo() {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const seconds = now.getSeconds();
+
+      // Update clock display
+      clock.textContent = now.toLocaleTimeString();
+      date.textContent = now.toLocaleDateString();
+
+      // Calculate total seconds since 7:20 AM
+      const startTime = new Date();
+      startTime.setHours(7, 20, 0, 0);
+      let diff = (now - startTime) / 1000;
+
+      if (diff < 0) {
+        diff += 24 * 60 * 60; // add 24 hrs if before 7:20 AM
+      }
+
+      // Video duration is 22 seconds across 24 hours
+      const secondsInDay = 86400; // 24 * 60 * 60
+      const videoDuration = 22;
+      const targetVideoTime = (diff / secondsInDay) * videoDuration;
+
+      video.currentTime = targetVideoTime;
+      video.pause(); // pause it so it doesn't auto-play
+    }
+
+    setInterval(updateClockAndVideo, 1000);
+    updateClockAndVideo();
+  </script>
+
+</body>
+</html>
